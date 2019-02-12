@@ -9,17 +9,12 @@ library(glmnet)
 library(tidyverse)
 
 # Load Data
-ddp.dat <- read.csv("Z:\\Personal Folders\\Jeff\\Data Projects\\DDP Meta\\Data\\DDP_STAT_Final.csv", header=T)
+ddp.dat <- read.csv("Z:\\Personal Folders\\Jeff\\Data Projects\\DDP Meta\\Data\\STAT ROC.csv", header=T)
 
 # Create Model Calibration Data Set
 ddp.cal <- filter(ddp.dat,split==1)
 dim(ddp.cal) # 114 x 190
 
-# Create Model Validation Data Set
-ddp.val <- filter(ddp.dat,split==2)
-dim(ddp.val) # 57 x 190
-
-n <- nrow(ddp.cal)
 
 # Predictor variables from the calibration data set
 predictors <- cbind(ddp.cal$stat_play_turn, ddp.cal$stat_play_doll, ddp.cal$stat_req_bubble, ddp.cal$stat_req_food, 
@@ -30,8 +25,6 @@ ddp.cal$stat_imi_shake_rattle, ddp.cal$stat_imi_roll_car,  ddp.cal$stat_imi_drum
 ########### Lasso Regression on Calibration Data
 # Creates LASSO Regression Models
 lasso.12 <- glmnet(predictors,ddp.cal$asd,family= "binomial")
-lasso.12$beta[,63] # Model coefficients
-lasso.12$a0 # Model intercept
 
 ## Use the model to predict likelihood of and ASD Diagnosis
 lasso.p <- predict(lasso.12, newx = predictors, type="response")
@@ -73,8 +66,8 @@ roc.stat
 plot(roc(ddp.cal$asd, lasso.63,smooth=T),main="ROC Curve Original vs. LASSO Scoring", col="Purple") #Nicer plot with smoothing
 lines(roc(ddp.cal$asd,ddp.cal$stat_sum_domain,smooth=T), col = "Red",lty=5)
 points(0.7968464,0.8884540, col = "purple", cex=1.5, pch=5)
-points(0.7650748,0.8630137, col = "red", cex=1.5, pch=5)
-legend("bottomright", legend= c("LASSO AUC = 0.92","STAT Original AUC = 0.89"),
+points(0.7513787,0.8395303, col = "red", cex=1.5, pch=5)
+legend("bottomright", legend= c("LASSO AUC = 0.92","STAT Original AUC = 0.87"),
 col=c("purple","red"),lty=c(1,5),cex=1.0,text.font=4,lwd=2,bty="n")
 
 # Obtain a p-value for testing the difference between two ROC Curves
