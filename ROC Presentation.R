@@ -5,6 +5,7 @@ install.packages("pROC")
 library(pROC)
 
 # Load Data for ROC Curves
+# Change file path to directory you stored the data
 roc.data <- read.csv("Z:\\Personal Folders\\Jeff\\Data Projects\\DDP Meta\\Data\\ROC.csv", header=T)
 
 # Dataset contains 114 toddlers at risk for autism sprectrum disorder who were given
